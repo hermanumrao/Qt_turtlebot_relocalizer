@@ -12,6 +12,7 @@ pip install -r requirements.txt
 mkdir -p ~/ros2_ws/src/
 mv random_localizer ~/ros2_ws/src/
 mv maps ~/maps/
+mv src ~
 
 cd ~/ros2_ws/
 colcon build
