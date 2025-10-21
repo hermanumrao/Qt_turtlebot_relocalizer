@@ -3,6 +3,7 @@ import os
 from launch import LaunchDescription
 from launch.actions import TimerAction, ExecuteProcess, LogInfo, SetEnvironmentVariable
 
+
 def generate_launch_description():
     # Set TurtleBot3 model
     set_model = SetEnvironmentVariable(name='TURTLEBOT3_MODEL', value='waffle')
@@ -12,7 +13,7 @@ def generate_launch_description():
         'ros2', 'launch', 'turtlebot3_gazebo', 'turtlebot3_world.launch.py'
     ]
 
-    # Navigation2 launch (delayed 10s to ensure Gazebo is ready)
+    # Navigation2 launch (delayed 10s)
     home = os.environ['HOME']
     map_file = os.path.join(home, 'maps', 'map1.yaml')
     nav2_cmd = [
@@ -35,4 +36,3 @@ def generate_launch_description():
             ]
         ),
     ])
-

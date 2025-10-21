@@ -2,20 +2,24 @@
 from launch import LaunchDescription
 from launch.actions import LogInfo, ExecuteProcess
 
+
 def generate_launch_description():
     return LaunchDescription([
 
         LogInfo(msg="[RANDOM_LOCALIZER] Stopping random_localizer_node..."),
 
-        # Step 1: Kill the random_localizer_node immediately
+        # Kill the random_localizer_node
         ExecuteProcess(
             cmd=['pkill', '-f', 'random_localizer'],
             output='screen'
         ),
 
-        LogInfo(msg="[RANDOM_LOCALIZER] Publishing zero velocities continuously for 3 seconds..."),
+        LogInfo(
+            msg="[RANDOM_LOCALIZER] Publishing zero velocities continuously for 3 seconds..."),
 
-        # Step 2: Run Python script that continuously publishes 0 velocity for 3 sec
+        # Run Python script that continuously publishes 0 velocity for 3 sec
+        # this needs to run on a seperate node so that it can continue running even after this node
+        # or package stops, hence the extra lines below
         ExecuteProcess(
             cmd=[
                 'python3', '-c',
@@ -49,4 +53,3 @@ rclpy.shutdown()
             output='screen'
         )
     ])
-

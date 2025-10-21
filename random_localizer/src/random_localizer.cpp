@@ -22,11 +22,10 @@ public:
         "/scan", 10,
         std::bind(&RandomLocalizer::scanCallback, this, std::placeholders::_1));
 
-    // Publish initial pose after a short delay
+    // Publish initial pose for starting estimation (some randome pose)
     timer_ = this->create_wall_timer(
         2s, std::bind(&RandomLocalizer::publishInitialPose, this));
 
-    // Main loop timer
     move_timer_ = this->create_wall_timer(
         200ms, std::bind(&RandomLocalizer::moveLoop, this));
 
@@ -36,7 +35,7 @@ public:
 private:
   void publishInitialPose() {
     geometry_msgs::msg::PoseWithCovarianceStamped pose;
-    pose.header.stamp = this->now();
+    pose.header.stamp = this->now(); // copied fron chat relolizer
     pose.header.frame_id = "map";
     pose.pose.pose.position.x = 0.0;
     pose.pose.pose.position.y = 0.0;
@@ -46,29 +45,32 @@ private:
     pose.pose.covariance[35] = 0.0685;
 
     initial_pose_pub_->publish(pose);
-    RCLCPP_INFO(this->get_logger(), "Initial pose published.");
-    timer_->cancel(); // only once
+    RCLCPP_INFO(this->get_logger(), "Init_pose published");
+    timer_->cancel();
   }
 
-	void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
-		  float min_dist = std::numeric_limits<float>::infinity();
+  // check for obstacles in the front if nothing move forward else turn randomly
+  // till you find nothing
+  void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
+    float min_dist = std::numeric_limits<float>::infinity();
 
-		  // Compute front sector indices
-		  double front_angle = M_PI / 12.0; // ±15 degrees in radians
-		  int start_idx = std::max(0, int((0.0 - front_angle - msg->angle_min) / msg->angle_increment));
-		  int end_idx = std::min(int(msg->ranges.size()) - 1,
-		                         int((0.0 + front_angle - msg->angle_min) / msg->angle_increment));
+    double front_angle = M_PI / 4.0;
+    int start_idx = std::max(
+        0, int((0.0 - front_angle - msg->angle_min) / msg->angle_increment));
+    int end_idx = std::min(
+        int(msg->ranges.size()) - 1,
+        int((0.0 + front_angle - msg->angle_min) / msg->angle_increment));
 
-		  for (int i = start_idx; i <= end_idx; i++) {
-		      float r = msg->ranges[i];
-		      if (std::isfinite(r) && r < min_dist) {
-		          min_dist = r;
-		      }
-		  }
+    for (int i = start_idx; i <= end_idx; i++) {
+      float r = msg->ranges[i];
+      if (std::isfinite(r) && r < min_dist) {
+        min_dist = r;
+      }
+    }
+    // 0.3 still clashed with wall
 
-		  obstacle_detected_ = (min_dist < 0.4);
-	}
-
+    obstacle_detected_ = (min_dist < 0.4);
+  }
 
   void moveLoop() {
     geometry_msgs::msg::Twist cmd;
@@ -84,7 +86,7 @@ private:
 
       // Turn for a short duration
       turn_counter_++;
-      if (turn_counter_ > 30) {
+      if (turn_counter_ > 10) {
         obstacle_detected_ = false;
         turn_counter_ = 0;
       }
