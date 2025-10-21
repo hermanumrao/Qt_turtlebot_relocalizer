@@ -7,6 +7,11 @@ thinking back i believe it might have made more sense to make one for mapping us
 ### Basic Idea:
 Your robot is in an known space, of which you already have a map. The robot moves around the map avoiding obstacles trying to predict it's own location based on the current sensor readings and previously recorded map.
 
+### video rec:
+Please refer this video on drive:
+[click here to watch the vid](https://drive.google.com/file/d/1C92PzVYZZPKT3HYrwKkkxy6R4OIZKh4m/view?usp=sharing)
+
+
 ### Pre-requisites:
 - ROS2-Humble
 - linux
@@ -36,8 +41,12 @@ now
 
 ## Running the application
 ``` bash
-cd
+source ~/ros2_ws/install/setup.sh
+export TURTLEBOT3_MODEL=waffle
 python3 src/main.py
 ```
 
 ## desiegn philosophies:
+so basically I made use of turtle bot 
+I believe its the best place to begin any rover based project from ideation to protypin, it't always been helpful.
+So i wrote a new package over this
