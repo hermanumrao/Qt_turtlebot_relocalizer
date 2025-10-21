@@ -61,7 +61,7 @@ the other 2 are just to start and stop the the reandon localizer package
 
 the start and stop buttons basically call these 2 launch files
 
-on the logs you can see cmd_vel, odom and laserscan, these were chosen cause i believe these are what are requiredto recrreate the entire situation, rest of the data is redundant and can be recomputed based on this if at all required.
+on the logs you can see cmd_vel, odom and laserscan, these were chosen cause i believe these are what are required to recreate the entire situation, rest of the data is redundant and can be recomputed based on this if at all required.
 
 the telemetry shows the number of laser point the lidar recieves, showing qulity of incoming data.
 also it shows the graph for uncertainity in position clculated by the AMCL package
